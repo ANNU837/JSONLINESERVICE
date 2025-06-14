@@ -3,43 +3,129 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>News Detail</title>
+  <title>News Detail | JSONLINESERVICE</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f6fa; color: #222; margin: 0; }
-    .container { max-width: 700px; margin: 2rem auto; background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(0,0,0,0.12); padding: 2.5rem 2rem; }
-    .news-title { font-size: 2rem; color: #667eea; margin-bottom: 1rem; }
-    .news-date { color: #666; font-size: 1rem; margin-bottom: 1rem;}
-    .news-image { max-width: 100%; max-height: 380px; border-radius: 8px; margin: 1.5rem 0; display: block; }
-    .news-content { font-size: 1.14rem; margin-bottom: 2rem;}
-    .home-btn { background: #28a745; color: #fff; padding: 10px 20px; border: none; border-radius: 25px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
-    .home-btn:hover { background: #218838; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f6fa;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 760px;
+      margin: 2.5rem auto 2rem auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+      padding: 2.8rem 2.2rem 2.2rem 2.2rem;
+    }
+    .news-title {
+      font-size: 2rem;
+      color: #667eea;
+      margin-bottom: 0.7rem;
+      font-weight: bold;
+    }
+    .news-date {
+      color: #888;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .news-image {
+      max-width: 100%;
+      max-height: 320px;
+      border-radius: 8px;
+      margin: 1.1rem 0 1.5rem 0;
+      box-shadow: 0 2px 8px rgba(102,126,234,0.09);
+      display: block;
+    }
+    .news-content {
+      line-height: 1.7;
+      font-size: 1.15rem;
+      color: #222;
+      margin-bottom: 2rem;
+      white-space: pre-line;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      color: #764ba2;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1rem;
+      border-radius: 6px;
+      padding: 5px 14px 5px 0;
+      transition: color 0.2s;
+    }
+    .back-link:hover {
+      color: #28a745;
+      text-decoration: underline;
+    }
+    @media (max-width: 700px) {
+      .container { padding: 1.1rem 3vw;}
+      .news-title { font-size: 1.35rem;}
+    }
   </style>
 </head>
 <body>
-  <div class="container" id="newsDetail"></div>
+  <div class="container">
+    <a href="index.html#news" class="back-link"><i class="fas fa-arrow-left"></i> Back to News</a>
+    <div id="newsDetail">
+      <div style="color:#aaa;text-align:center;padding:2em 0;">
+        <i class="fas fa-spinner fa-spin"></i> Loading...
+      </div>
+    </div>
+  </div>
   <script>
-    function getQueryParam(name) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(name);
+    // Get timestamp from URL: ?ts=...
+    function getTimestamp() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('ts');
     }
-    const timestamp = getQueryParam('ts');
-    fetch('http://localhost:3001/api/news')
-      .then(res => res.json())
-      .then(newsItems => {
-        const item = newsItems.find(n => String(n.timestamp) === String(timestamp));
-        if (!item) {
-          document.getElementById('newsDetail').innerHTML = '<p style="color:#e74c3c;">News item not found.</p>';
-          return;
-        }
+
+    // Render news detail
+    function renderNewsDetail(news) {
+      if (!news) {
         document.getElementById('newsDetail').innerHTML = `
-          <a href="index.html" class="home-btn" target="_self"><i class="fas fa-home"></i> Home</a>
-          <div class="news-title">${item.title}</div>
-          <div class="news-date">${item.date}</div>
-          ${item.imageUrl ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
-          <div class="news-content">${item.content}</div>
+          <div style="color:#dc3545;text-align:center;margin:3em 0;">
+            <i class="fas fa-exclamation-circle" style="font-size:2.3rem;"></i>
+            <div style="margin:1.1em 0 0.3em 0;font-size:1.2em;">News not found</div>
+            <div>Sorry, we couldn't find the requested news item.</div>
+          </div>
         `;
-      });
+        return;
+      }
+      document.getElementById('newsDetail').innerHTML = `
+        <div class="news-title">${news.title || ''}</div>
+        <div class="news-date">${news.date || ''}</div>
+        ${news.imageUrl ? `<img src="${news.imageUrl}" class="news-image" alt="News Image">` : ''}
+        <div class="news-content">${(news.content || '').replace(/\n/g, "<br>")}</div>
+      `;
+    }
+
+    // Load news.json and show the correct news item
+    function loadNewsDetail() {
+      const ts = getTimestamp();
+      fetch('news.json')
+        .then(res => res.json())
+        .then(newsArr => {
+          // Try string and number match for timestamp
+          const news = newsArr.find(n => String(n.timestamp) === String(ts));
+          renderNewsDetail(news);
+        })
+        .catch(() => {
+          document.getElementById('newsDetail').innerHTML = `
+            <div style="color:#dc3545;text-align:center;margin:3em 0;">
+              <i class="fas fa-exclamation-triangle" style="font-size:2.2rem;"></i>
+              <div style="margin:1.1em 0 0.3em 0;font-size:1.14em;">Unable to load news data.</div>
+              <div>Please check your internet connection or try again later.</div>
+            </div>
+          `;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadNewsDetail);
   </script>
 </body>
 </html>
