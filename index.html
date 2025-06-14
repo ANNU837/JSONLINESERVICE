@@ -246,7 +246,6 @@
         <button class="carousel-btn right" onclick="nextTestimonial()" aria-label="Next testimonial"><i class="fas fa-chevron-right"></i></button>
       </div>
     </section>
-    <!-- Contact section removed from homepage as requested -->
   </main>
   <footer>
     <div class="container">
@@ -266,11 +265,6 @@
   </div>
   <div class="toast" id="toastMsg"></div>
   <script>
-    // ... full services array from previous answers ...
-    // (for brevity, not repeating here, please insert the full services array as in previous messages)
-    // The rest of your JS (for theme, modal, testimonials, etc.) goes here unchanged.
-    // Only the contact form JS is removed.
-
     // -- SERVICES ARRAY START --
     const services = [
       { 
@@ -564,8 +558,9 @@
     function openFullNews(timestamp) {
       window.open('news-detail.html?ts=' + encodeURIComponent(timestamp), '_blank');
     }
+    // --- FIX: cache busting for always-updated news.json ---
     function loadNews() {
-      fetch('news.json')
+      fetch('news.json?v=' + Date.now())
         .then(res => res.json())
         .then(newsItems => renderNews(newsItems))
         .catch(() => {
