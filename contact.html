@@ -54,7 +54,6 @@
       font-size: 1.1em;
     }
     .home-link:hover { text-decoration: underline;}
-    /* Hero section same as main page */
     .hero {
       text-align: center;
       padding: 3rem 0 2rem 0;
@@ -80,7 +79,8 @@
   </section>
   <div class="container">
     <h2>Contact Us</h2>
-    <form class="contact-form" id="contactForm" onsubmit="showSuccess(event)">
+    <!-- Formspree integration: update action if you get a new form ID -->
+    <form class="contact-form" id="contactForm" action="https://formspree.io/f/mrbkkggj" method="POST">
       <div class="form-group">
         <label for="name">Full Name *</label>
         <input type="text" id="name" name="name" required autocomplete="off">
@@ -112,21 +112,9 @@
         <textarea id="message" name="message" rows="5" placeholder="Please describe your requirements..."></textarea>
       </div>
       <button type="submit" class="btn">Submit Inquiry</button>
-      <div id="successMsg" class="success-message" style="display:none;">
-        Thank you! Your inquiry has been submitted. We will contact you soon.
-      </div>
     </form>
     <a class="email-link" href="mailto:jsosjagtial@gmail.com"><i class="fas fa-envelope"></i> jsosjagtial@gmail.com</a>
     <a href="index.html" class="home-link"><i class="fas fa-home"></i> Home</a>
   </div>
-  <script>
-    function showSuccess(event) {
-      event.preventDefault();
-      document.getElementById('successMsg').style.display = 'block';
-      setTimeout(function(){
-        document.getElementById('contactForm').reset();
-      }, 500);
-    }
-  </script>
 </body>
 </html>
