@@ -266,6 +266,12 @@
   </div>
   <div class="toast" id="toastMsg"></div>
   <script>
+    // ... full services array from previous answers ...
+    // (for brevity, not repeating here, please insert the full services array as in previous messages)
+    // The rest of your JS (for theme, modal, testimonials, etc.) goes here unchanged.
+    // Only the contact form JS is removed.
+
+    // -- SERVICES ARRAY START --
     const services = [
       { 
         icon: "fa-clipboard-list", 
@@ -479,6 +485,8 @@
         `
       }
     ];
+    // -- SERVICES ARRAY END --
+
     function renderServices(filter="") {
       const grid = document.getElementById('servicesGrid');
       let filtered = services.filter(s => s.name.toLowerCase().includes(filter.toLowerCase()) || s.desc.toLowerCase().includes(filter.toLowerCase()));
@@ -548,7 +556,7 @@
                 <button class="btn" style="display:inline-block;font-weight:700;padding:4px 14px;margin-left:8px;font-size:1em;" onclick="openFullNews('${item.timestamp}')">Read More</button>
               </b>
             </p>
-            ${item.imageUrl && item.imageUrl.startsWith('http') && !item.imageUrl.includes('localhost') ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
+            ${item.imageUrl ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
           </div>
         `;
       }).join('');
