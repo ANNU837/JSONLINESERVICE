@@ -99,7 +99,7 @@
       document.getElementById('newsDetail').innerHTML = `
         <div class="news-title">${news.title || ''}</div>
         <div class="news-date">${news.date || ''}</div>
-        ${news.imageUrl ? `<img src="${news.imageUrl}" class="news-image" alt="News Image">` : ''}
+        ${news.imageUrl ? `<img src="${news.imageUrl}" class="news-image" alt="News Image" onerror="this.style.display='none';">` : ''}
         <div class="news-content">${(news.content || '').replace(/\n/g, "<br>")}</div>
       `;
     }
@@ -107,7 +107,7 @@
     // Load news.json and show the correct news item
     function loadNewsDetail() {
       const ts = getTimestamp();
-      fetch('news.json')
+      fetch('news.json?v=' + Date.now())
         .then(res => res.json())
         .then(newsArr => {
           // Try string and number match for timestamp
