@@ -81,6 +81,8 @@
     <h2>Contact Us</h2>
     <!-- Formspree integration: update action if you get a new form ID -->
     <form class="contact-form" id="contactForm" action="https://formspree.io/f/mrbkkggj" method="POST">
+      <!-- This hidden input triggers redirect to homepage after submission -->
+      <input type="hidden" name="_redirect" value="https://annu837.github.io/JSONLINESERVICE/index.html">
       <div class="form-group">
         <label for="name">Full Name *</label>
         <input type="text" id="name" name="name" required autocomplete="off">
