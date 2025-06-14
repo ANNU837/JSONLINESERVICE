@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>News Detail</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f6fa; color: #222; margin: 0; }
+    .container { max-width: 700px; margin: 2rem auto; background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(0,0,0,0.12); padding: 2.5rem 2rem; }
+    .news-title { font-size: 2rem; color: #667eea; margin-bottom: 1rem; }
+    .news-date { color: #666; font-size: 1rem; margin-bottom: 1rem;}
+    .news-image { max-width: 100%; max-height: 380px; border-radius: 8px; margin: 1.5rem 0; display: block; }
+    .news-content { font-size: 1.14rem; margin-bottom: 2rem;}
+    .home-btn { background: #28a745; color: #fff; padding: 10px 20px; border: none; border-radius: 25px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+    .home-btn:hover { background: #218838; }
+  </style>
+</head>
+<body>
+  <div class="container" id="newsDetail"></div>
+  <script>
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+    const timestamp = getQueryParam('ts');
+    fetch('http://localhost:3001/api/news')
+      .then(res => res.json())
+      .then(newsItems => {
+        const item = newsItems.find(n => String(n.timestamp) === String(timestamp));
+        if (!item) {
+          document.getElementById('newsDetail').innerHTML = '<p style="color:#e74c3c;">News item not found.</p>';
+          return;
+        }
+        document.getElementById('newsDetail').innerHTML = `
+          <a href="index.html" class="home-btn" target="_self"><i class="fas fa-home"></i> Home</a>
+          <div class="news-title">${item.title}</div>
+          <div class="news-date">${item.date}</div>
+          ${item.imageUrl ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
+          <div class="news-content">${item.content}</div>
+        `;
+      });
+  </script>
+</body>
+</html>

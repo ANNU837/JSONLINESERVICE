@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - JSONLINESERVICE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f6fa; color: #222; margin: 0; }
+    .container { max-width: 600px; margin: 2rem auto; background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(0,0,0,0.12); padding: 2.5rem 2rem; }
+    h2 { color: #667eea; text-align: center; margin-bottom: 2rem;}
+    .contact-form { display: grid; gap: 1rem;}
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { margin-bottom: 0.5rem; font-weight: 600; color: #222;}
+    .form-group input, .form-group textarea, .form-group select {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      background: #fff;
+      color: #222;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #667eea;}
+    .btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 0.7rem;
+    }
+    .btn:hover { background: linear-gradient(135deg,#764ba2,#667eea);}
+    .email-link { display: block; text-align: center; margin-top: 1.5rem; font-weight: bold; color: #764ba2; font-size: 1.1em;}
+    .success-message {
+      color: #28a745;
+      text-align: center;
+      font-weight: bold;
+      padding: 1rem 0 0 0;
+    }
+    .home-link {
+      display: block;
+      text-align: center;
+      margin: 2rem 0 0 0;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+    .home-link:hover { text-decoration: underline;}
+    /* Hero section same as main page */
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem 0;
+      color: #667eea;
+      background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
+      animation: fadeInUp 1s;
+    }
+    .hero h1 { font-size: 3rem; }
+    .hero p { color: #222; opacity: 0.9; }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero section at top, same as main page -->
+  <section class="hero">
+    <div class="container">
+      <h1>JSONLINESERVICE</h1>
+      <p>Your One-Stop Digital Services Portal</p>
+      <p>Simplifying Government Services, Applications &amp; More</p>
+    </div>
+  </section>
+  <div class="container">
+    <h2>Contact Us</h2>
+    <form class="contact-form" id="contactForm" onsubmit="showSuccess(event)">
+      <div class="form-group">
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" name="name" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" name="phone" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="service">Service Required *</label>
+        <select id="service" name="service" required>
+          <option value="">Select a service</option>
+          <option value="gst">GST Registration</option>
+          <option value="income-tax">Income Tax Filing</option>
+          <option value="passport">Passport Services</option>
+          <option value="pan-tan">PAN/TAN Services</option>
+          <option value="digital-signature">Digital Signature Certificates</option>
+          <option value="competitive-exam">Competitive Exam Applications</option>
+          <option value="scholarship">Scholarship Applications</option>
+          <option value="other">Other Online Services</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" placeholder="Please describe your requirements..."></textarea>
+      </div>
+      <button type="submit" class="btn">Submit Inquiry</button>
+      <div id="successMsg" class="success-message" style="display:none;">
+        Thank you! Your inquiry has been submitted. We will contact you soon.
+      </div>
+    </form>
+    <a class="email-link" href="mailto:jsosjagtial@gmail.com"><i class="fas fa-envelope"></i> jsosjagtial@gmail.com</a>
+    <a href="index.html" class="home-link"><i class="fas fa-home"></i> Home</a>
+  </div>
+  <script>
+    function showSuccess(event) {
+      event.preventDefault();
+      document.getElementById('successMsg').style.display = 'block';
+      setTimeout(function(){
+        document.getElementById('contactForm').reset();
+      }, 500);
+    }
+  </script>
+</body>
+</html>

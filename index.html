@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JSONLINESERVICE - Modern Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --danger: #dc3545;
+      --success: #28a745;
+      --bg: #f5f6fa;
+      --text: #222;
+      --card: #fff;
+      --shadow: 0 4px 24px rgba(0,0,0,0.11);
+
+      --bg-dark: #191a23;
+      --card-dark: #222232;
+      --text-dark: #eee;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.4s, color 0.4s;
+      min-height: 100vh;
+    }
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    header {
+      background: rgba(255,255,255,0.97);
+      box-shadow: var(--shadow);
+      position: sticky; top: 0; z-index: 1000; transition: background 0.4s;
+    }
+    body.dark header { background: rgba(34,34,50,0.98); }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
+    .logo { font-size: 2rem; color: var(--primary); font-weight: bold; text-decoration: none; letter-spacing: 2px;}
+    .nav-toggle { display: none; font-size: 2rem; background: none; border: none; color: var(--primary);}
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text); font-weight: 500; text-decoration: none; transition: color 0.3s; }
+    body.dark .nav-links a { color: var(--text-dark); }
+    .nav-links a:hover { color: var(--primary); }
+    .theme-switch { font-size: 1.4rem; cursor: pointer; margin-left: 1.2rem; }
+    @media (max-width: 768px) {
+      .nav-links { flex-direction: column; background: var(--card); position: fixed; top: 0; right: -100%; width: 220px; height: 100vh; justify-content: flex-start; align-items: flex-start; padding: 2rem 1.5rem; box-shadow: var(--shadow); transition: right 0.35s;}
+      .nav-links.open { right: 0; }
+      .nav-toggle { display: block; }
+    }
+    .fab {
+      position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg,var(--primary),var(--secondary));
+      color: #fff; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: var(--shadow); z-index: 1100; cursor: pointer;
+      transition: background 0.3s;
+    }
+    .fab:hover { background: linear-gradient(135deg,var(--secondary),var(--primary)); }
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem 0;
+      color: var(--primary);
+      background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
+      animation: fadeInUp 1s;
+    }
+    .hero h1 { font-size: 3rem; }
+    .hero p { color: var(--text); opacity: 0.9; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 2rem; margin: 3rem 0;}
+    .service-card {
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 2rem 1.2rem;
+      transition: transform 0.25s, box-shadow 0.25s, background 0.4s;
+      cursor: pointer;
+      position: relative;
+      animation: fadeInUp 1s;
+    }
+    body.dark .service-card { background: var(--card-dark);}
+    .service-card:hover { transform: translateY(-9px) scale(1.03); box-shadow: 0 10px 30px rgba(102,126,234,0.11);}
+    .service-icon { font-size: 2.4rem; margin-bottom: 1rem; color: var(--secondary);}
+    .service-card h3 { color: var(--primary); margin-bottom: .8rem; }
+    .btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 0.7rem;
+    }
+    .btn:hover { background: linear-gradient(135deg,var(--secondary),var(--primary)); }
+    .news-section {
+      background: var(--card);
+      border-radius: 15px;
+      margin: 3rem 0;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 1.1s;
+    }
+    body.dark .news-section { background: var(--card-dark);}
+    .news-section h2 { color: var(--primary); margin-bottom: 1.5rem; text-align: center;}
+    .news-item {
+      border-bottom: 1px solid #eee;
+      padding: 1rem 0;
+      transition: background 0.3s;
+    }
+    .news-item:last-child { border-bottom: none; }
+    .news-item:hover {
+      background: rgba(102,126,234,0.05);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .news-date { color: #666; font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .news-image {
+      max-width: 100%;
+      max-height: 180px;
+      border-radius: 8px;
+      margin: 0.7rem 0;
+      display: block;
+      box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+    }
+    .contact-section {
+      background: var(--card);
+      border-radius: 15px;
+      padding: 2rem;
+      margin: 3rem 0;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 1.1s;
+    }
+    body.dark .contact-section { background: var(--card-dark);}
+    .contact-form { display: grid; gap: 1rem; max-width: 600px; margin: 0 auto;}
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { margin-bottom: 0.5rem; font-weight: 600; color: var(--text);}
+    body.dark .form-group label { color: var(--text-dark);}
+    .form-group input, .form-group textarea, .form-group select {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      background: var(--card);
+      color: var(--text);
+    }
+    body.dark .form-group input, body.dark .form-group textarea, body.dark .form-group select {
+      background: var(--card-dark);
+      color: var(--text-dark);
+      border: 2px solid #393959;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--primary);}
+    footer {
+      background: rgba(0,0,0,0.85);
+      color: white;
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+    .modal-content {
+      background-color: var(--card);
+      margin: 10% auto;
+      padding: 2rem;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 540px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      position: relative;
+      animation: fadeInUp 0.7s;
+    }
+    body.dark .modal-content { background: var(--card-dark);}
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 16px; right: 24px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover { color: var(--primary);}
+    .toast {
+      position: fixed; bottom: 100px; right: 40px; min-width: 230px;
+      background: var(--card); color: var(--text); padding: 1rem 1.5rem;
+      border-radius: 8px; box-shadow: var(--shadow); z-index: 1200;
+      opacity: 0; pointer-events: none; transition: opacity 0.5s;
+    }
+    .toast.show { opacity: 1; pointer-events: all;}
+    .carousel {
+      margin: 3rem 0 2rem 0;
+      max-width: 600px;
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      animation: fadeInUp 1.15s;
+    }
+    body.dark .carousel { background: var(--card-dark);}
+    .carousel-quote { font-style: italic; font-size: 1.1rem; margin-bottom: 1rem; }
+    .carousel-author { font-weight: bold; color: var(--primary);}
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: none; border: none; font-size: 1.4rem;
+      color: var(--primary); cursor: pointer; z-index: 10;
+    }
+    .carousel-btn.left { left: 12px; }
+    .carousel-btn.right { right: 12px; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(35px);} to { opacity: 1; transform: translateY(0);} }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem;}
+      .services-grid { grid-template-columns: 1fr;}
+      .modal-content { margin-top: 60px;}
+      .carousel { padding: 1.2rem;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <a href="#" class="logo">JSONLINESERVICE</a>
+      <button class="nav-toggle" aria-label="Open Menu"><i class="fas fa-bars"></i></button>
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><span class="theme-switch" id="themeSwitch" title="Toggle Dark/Light"><i class="fas fa-moon"></i></span></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>JSONLINESERVICE</h1>
+        <p>Your One-Stop Digital Services Portal</p>
+        <p>Simplifying Government Services, Applications &amp; More</p>
+      </div>
+    </section>
+    <section id="services" class="container">
+      <input id="serviceSearch" type="text" placeholder="🔍 Search services..." style="width:100%;max-width:340px;margin:0 auto 2rem auto;display:block;padding:0.6rem 1.2rem;border-radius:8px;border:1px solid #ccc;">
+      <div class="services-grid" id="servicesGrid"></div>
+    </section>
+    <section id="news" class="container">
+      <div class="news-section">
+        <h2>📰 JS NEWS - Latest Updates</h2>
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <a href="admin-dashboard.html" class="btn" style="background:var(--secondary);color:#fff;" target="_blank">
+            <i class="fas fa-user-cog"></i> Admin Panel
+          </a>
+        </div>
+        <div id="newsContainer"></div>
+      </div>
+    </section>
+    <section id="testimonials" class="container">
+      <div class="carousel" id="carousel">
+        <button class="carousel-btn left" onclick="prevTestimonial()" aria-label="Previous testimonial"><i class="fas fa-chevron-left"></i></button>
+        <div class="carousel-content">
+          <div class="carousel-quote" id="carouselQuote"></div>
+          <div class="carousel-author" id="carouselAuthor"></div>
+        </div>
+        <button class="carousel-btn right" onclick="nextTestimonial()" aria-label="Next testimonial"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+    <section id="contact" class="container">
+      <div class="contact-section">
+        <h2 style="text-align:center;color:var(--primary);margin-bottom:2rem;">📞 Contact Us</h2>
+        <form class="contact-form" onsubmit="handleContactSubmit(event)">
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" required>
+          </div>
+          <div class="form-group">
+            <label for="service">Service Required *</label>
+            <select id="service" name="service" required>
+              <option value="">Select a service</option>
+              <option value="gst">GST Registration</option>
+              <option value="income-tax">Income Tax Filing</option>
+              <option value="passport">Passport Services</option>
+              <option value="pan-tan">PAN/TAN Services</option>
+              <option value="digital-signature">Digital Signature Certificates</option>
+              <option value="competitive-exam">Competitive Exam Applications</option>
+              <option value="scholarship">Scholarship Applications</option>
+              <option value="other">Other Online Services</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" placeholder="Please describe your requirements..."></textarea>
+          </div>
+          <button type="submit" class="btn" style="justify-self:center;width:fit-content;">Submit Inquiry</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 JSONLINESERVICE. All rights reserved.</p>
+      <p>Your trusted partner for digital services and applications.</p>
+    </div>
+  </footer>
+  <div id="serviceModal" class="modal" aria-modal="true" role="dialog">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()" aria-label="Close">&times;</span>
+      <h2 id="modalTitle"></h2>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+  <div class="fab" title="Contact us instantly" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+    <i class="fas fa-headset"></i>
+  </div>
+  <div class="toast" id="toastMsg"></div>
+  <script>
+    const services = [
+      { 
+        icon: "fa-clipboard-list", 
+        name: "GST Registration", 
+        desc: "Complete GST registration assistance with expert guidance and document preparation.",
+        modal: `
+          <h3>GST Registration Services</h3>
+          <ul>
+            <li>PAN Card</li><li>Aadhaar Card</li><li>Address Proof</li><li>Bank Account Details</li><li>Business Registration Certificate</li>
+          </ul>
+          <p><strong>Processing Time:</strong> 3-7 working days</p>
+          <ul>
+            <li>Complete application assistance</li>
+            <li>Document verification</li>
+            <li>Follow-up with authorities</li>
+            <li>Post-registration support</li>
+          </ul>
+          <p>
+            <strong>Official Portal:</strong> 
+            <a href="https://www.gst.gov.in/" target="_blank" style="color:#667eea;font-weight:600;">https://www.gst.gov.in/</a>
+          </p>
+          <p>
+            <b>
+              <a href="contact.html" target="_blank" style="color:#28a745;font-weight:600;text-decoration:none;">Contact for Help</a>
+            </b>
+          </p>
+          <p>
+            <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
+          </p>
+        `
+      },
+      { 
+        icon: "fa-coins", 
+        name: "Income Tax Filing", 
+        desc: "Professional income tax return filing services for individuals and businesses.",
+        modal: `
+          <h3>Income Tax Filing Services</h3>
+          <ul>
+            <li>Individual ITR Filing (ITR-1 to ITR-4)</li>
+            <li>Business Tax Returns</li>
+            <li>Tax Planning &amp; Advisory</li>
+            <li>Tax Refund Processing</li>
+          </ul>
+          <p><strong>Documents Required:</strong> Form 16 / Salary Slips, Bank Statements, Investment Proofs, Previous Year ITR (if applicable)</p>
+          <p>
+            <strong>Official Portal:</strong> 
+            <a href="https://www.incometax.gov.in/" target="_blank" style="color:#667eea;font-weight:600;">https://www.incometax.gov.in/</a>
+          </p>
+          <p>
+            <b>
+              <a href="contact.html" target="_blank" style="color:#28a745;font-weight:600;text-decoration:none;">Contact for Help</a>
+            </b>
+          </p>
+          <p>
+            <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
+          </p>
+        `
+      },
+      { 
+        icon: "fa-passport", 
+        name: "Passport Services", 
+        desc: "New passport applications, renewals, and related documentation services.",
+        modal: `
+          <h3>Passport Services</h3>
+          <ul>
+            <li>New Passport Application</li>
+            <li>Passport Renewal</li>
+            <li>Name/Address Change</li>
+            <li>Tatkal Services</li>
+          </ul>
+          <p><strong>Required Documents:</strong> Birth Certificate, Address Proof, Identity Proof, Photographs</p>
+          <p><strong>Processing Time:</strong> 15-30 days (Normal), 3-7 days (Tatkal)</p>
+          <p>
+            <strong>Official Portal:</strong> 
+            <a href="https://portal2.passportindia.gov.in/" target="_blank" style="color:#667eea;font-weight:600;">https://portal2.passportindia.gov.in/</a>
+          </p>
+          <p>
+            <b>
+              <a href="contact.html" target="_blank" style="color:#28a745;font-weight:600;text-decoration:none;">Contact for Help</a>
+            </b>
+          </p>
+          <p>
+            <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
+          </p>
+        `
+      },
+      { 
+        icon: "fa-id-card", 
+        name: "PAN/TAN Services", 
+        desc: "PAN card applications, corrections, and TAN registration services.",
+        modal: `
+          <h3>PAN/TAN Services</h3>
+          <p><strong>PAN Card:</strong> New Application, Correction, Duplicate, Verification</p>
+          <p><strong>TAN Services:</strong> Registration, Correction, TDS Return Filing</p>
+          <p><strong>Quick Processing:</strong> 5-15 working days</p>
+          <p>
+            <strong>Official Portal:</strong> 
+            <a href="https://www.onlineservices.nsdl.com/paam/endUserRegisterContact.html" target="_blank" style="color:#667eea;font-weight:600;">https://www.onlineservices.nsdl.com/paam/endUserRegisterContact.html</a>
+          </p>
+          <p>
+            <b>
+              <a href="contact.html" target="_blank" style="color:#28a745;font-weight:600;text-decoration:none;">Contact for Help</a>
+            </b>
+          </p>
+          <p>
+            <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
+          </p>
+        `
+      },
+      { 
+        icon: "fa-shield-alt", 
+        name: "Digital Signature Certificates", 
+        desc: "Secure digital signature certificates for official document signing.",
+        modal: `
+          <h3>Digital Signature Certificates</h3>
+          <ul>
+            <li>Class 2 DSC (Individual)</li>
+            <li>Class 3 DSC (Individual &amp; Organization)</li>
+            <li>DGFT DSC</li>
+            <li>Combo DSC</li>
+          </ul>
+          <p><strong>Validity:</strong> 1-3 years</p>
+          <p><strong>Usage:</strong> Income Tax e-Filing, GST Returns, Company ROC Filings, Tender Submissions</p>
+          <p>
+            <strong>Official Portal:</strong> 
+            <a href="https://www.cca.gov.in/" target="_blank" style="color:#667eea;font-weight:600;">https://www.cca.gov.in/</a>
+          </p>
+          <p>
+            <b>
+              <a href="contact.html" target="_blank" style="color:#28a745;font-weight:600;text-decoration:none;">Contact for Help</a>
+            </b>
+          </p>
+          <p>
+            <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
+          </p>
+        `
+      },
+      {
+        icon: "fa-book",
+        name: "Competitive Exam Applications",
+        desc: "Application assistance for various competitive examinations and entrance tests.",
+        modal: `
+          <h3>Competitive Exam Applications</h3>
+          <ul>
+            <li>Banking Exams (SBI, IBPS, RBI)</li>
+            <li>Civil Services (UPSC, State PSC)</li>
+            <li>Railway Exams (RRB)</li>
+            <li>Teaching Exams (TET, NET, SET)</li>
+            <li>Defense Exams (CDS, NDA)</li>
+            <li>Medical/Engineering Entrance</li>
+          </ul>
+          <p><strong>Our Services:</strong> Application Form Filling, Document Verification, Fee Payment, Admit Card Download</p>
+          <p>
+            <b>
+              <a href="contact.html" target="_blank" style="color:#28a745;font-weight:600;text-decoration:none;">Contact for Help</a>
+            </b>
+          </p>
+          <p>
+            <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
+          </p>
+        `
+      },
+      {
+        icon: "fa-graduation-cap",
+        name: "Scholarship Applications",
+        desc: "Complete guidance for scholarship applications and educational funding.",
+        modal: `
+          <h3>Scholarship Applications</h3>
+          <ul>
+            <li>Government Scholarships</li>
+            <li>Merit-based Scholarships</li>
+            <li>Minority Scholarships</li>
+            <li>State-specific Scholarships</li>
+            <li>Private Foundation Scholarships</li>
+          </ul>
+          <p><strong>Services:</strong> Eligibility Assessment, Application Preparation, Document Compilation, Submission &amp; Follow-up</p>
+          <p>
+            <b>
+              <a href="contact.html" target="_blank" style="color:#28a745;font-weight:600;text-decoration:none;">Contact for Help</a>
+            </b>
+          </p>
+          <p>
+            <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
+          </p>
+        `
+      },
+      {
+        icon: "fa-globe",
+        name: "Other Online Services",
+        desc: "Various government and private online services assistance.",
+        modal: `
+          <h3>Other Online Services</h3>
+          <ul>
+            <li>Aadhaar Services (New/Update)</li>
+            <li>Ration Card Applications</li>
+            <li>Driving License Services</li>
+            <li>Property Registration</li>
+            <li>Insurance Applications</li>
+            <li>Banking Services</li>
+            <li>Utility Bill Payments</li>
+            <li>Government Scheme Applications</li>
+          </ul>
+          <p>
+            <b>
+              <a href="contact.html" target="_blank" style="color:#28a745;font-weight:600;text-decoration:none;">Contact for Help</a>
+            </b>
+          </p>
+          <p>
+            <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
+          </p>
+        `
+      }
+    ];
+    function renderServices(filter="") {
+      const grid = document.getElementById('servicesGrid');
+      let filtered = services.filter(s => s.name.toLowerCase().includes(filter.toLowerCase()) || s.desc.toLowerCase().includes(filter.toLowerCase()));
+      grid.innerHTML = filtered.length ? filtered.map((s,i) =>
+        `<div class="service-card" tabindex="0" aria-label="${s.name}" onclick="openServiceModal(${i})">
+          <span class="service-icon"><i class="fas ${s.icon}"></i></span>
+          <h3>${s.name}</h3>
+          <p>${s.desc}</p>
+          <a href="#" class="btn" onclick="event.stopPropagation();openServiceModal(${i})">Learn More</a>
+        </div>`).join("") :
+        `<div style="grid-column:1/-1;text-align:center;color:#aaa;">No services found.</div>`;
+    }
+    document.getElementById('serviceSearch').addEventListener('input', e => renderServices(e.target.value));
+    renderServices();
+    function openServiceModal(idx) {
+      document.getElementById('serviceModal').style.display = 'block';
+      document.getElementById('modalTitle').textContent = services[idx].name;
+      document.getElementById('modalContent').innerHTML = services[idx].modal;
+    }
+    function closeModal() {
+      document.getElementById('serviceModal').style.display = 'none';
+    }
+    window.onclick = function(event) {
+      const modal = document.getElementById('serviceModal');
+      if (event.target === modal) modal.style.display = 'none';
+    };
+    document.onkeydown = function(e) {
+      if (e.key === "Escape") closeModal();
+    };
+    document.querySelector('.nav-toggle').onclick = () => document.querySelector('.nav-links').classList.toggle('open');
+    document.body.addEventListener('click', e => {
+      if (!e.target.closest('.nav-links,.nav-toggle')) document.querySelector('.nav-links').classList.remove('open');
+    });
+    const themeSwitch = document.getElementById('themeSwitch');
+    function setTheme(dark) {
+      document.body.classList.toggle('dark', dark);
+      themeSwitch.innerHTML = `<i class="fas fa-${dark?'sun':'moon'}"></i>`;
+      localStorage.setItem('darkMode', dark ? '1' : '0');
+    }
+    themeSwitch.onclick = () => setTheme(!document.body.classList.contains('dark'));
+    setTheme(localStorage.getItem('darkMode') === '1');
+    function showToast(msg, time=2400) {
+      const toast = document.getElementById('toastMsg');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), time);
+    }
+
+    function renderNews(newsItems) {
+      const container = document.getElementById('newsContainer');
+      if (!newsItems.length) {
+        container.innerHTML = `<div class="news-item" style="text-align:center;color:#666;padding:2rem;">
+          <h4>📰 No News Items</h4>
+          <p>Check back for the latest updates!</p>
+        </div>`;
+        return;
+      }
+      container.innerHTML = newsItems.map(item => {
+        let snippet = item.content.length > 150 ? item.content.substring(0, 150) + '...' : item.content;
+        return `
+          <div class="news-item" style="position:relative;">
+            <div class="news-date">${item.date}</div>
+            <h4>${item.title}</h4>
+            <p style="margin-bottom:0;">
+              ${snippet}
+              <b>
+                <button class="btn" style="display:inline-block;font-weight:700;padding:4px 14px;margin-left:8px;font-size:1em;" onclick="openFullNews('${item.timestamp}')">Read More</button>
+              </b>
+            </p>
+            ${item.imageUrl ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
+          </div>
+        `;
+      }).join('');
+    }
+    function openFullNews(timestamp) {
+      window.open('news-detail.html?ts=' + encodeURIComponent(timestamp), '_blank');
+    }
+    function loadNews() {
+      fetch('http://localhost:3001/api/news')
+        .then(res => res.json())
+        .then(newsItems => renderNews(newsItems))
+        .catch(() => {
+          document.getElementById('newsContainer').innerHTML = `
+            <div class="news-item" style="text-align:center;color:#666;padding:2rem;">
+              <h4>📰 Unable to load news</h4>
+              <p>Please check your internet connection or try again later.</p>
+            </div>
+          `;
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      loadNews();
+    });
+
+    const testimonials = [
+      { quote: "I got my GST registration done in just 3 days! The team is super friendly and responsive.", author: "Priya S." },
+      { quote: "Their tax filing service saved me a lot of time and confusion. Highly recommended.", author: "Rahul K." },
+      { quote: "Excellent support for my passport renewal. Very professional and quick.", author: "Meena Patel" },
+      { quote: "I easily got my digital signature certificate at a very good price.", author: "Suresh R." }
+    ];
+    let tIndex = 0;
+    function renderTestimonial() {
+      document.getElementById('carouselQuote').textContent = `"${testimonials[tIndex].quote}"`;
+      document.getElementById('carouselAuthor').textContent = `- ${testimonials[tIndex].author}`;
+    }
+    function nextTestimonial() { tIndex = (tIndex+1) % testimonials.length; renderTestimonial(); }
+    function prevTestimonial() { tIndex = (tIndex+testimonials.length-1) % testimonials.length; renderTestimonial(); }
+    renderTestimonial();
+    setInterval(nextTestimonial, 6000);
+
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        service: formData.get('service'),
+        message: formData.get('message')
+      };
+      showToast(`Thank you, ${data.name}! Your inquiry has been submitted. We'll contact you soon regarding your request.`);
+      event.target.reset();
+    }
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+      });
+    });
+  </script>
+</body>
+</html>
