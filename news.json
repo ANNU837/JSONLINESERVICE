@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "title": "hlo",
+    "content": "hlo",
+    "imageUrl": "http://localhost:3001/uploads/image-1749904902744-930765047.JPG",
+    "date": "14 Jun 2025",
+    "timestamp": 1749904902778
+  }
+]
