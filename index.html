@@ -110,6 +110,7 @@
       border-bottom: 1px solid #eee;
       padding: 1rem 0;
       transition: background 0.3s;
+      position: relative;
     }
     .news-item:last-child { border-bottom: none; }
     .news-item:hover {
@@ -271,8 +272,7 @@
         icon: "fa-clipboard-list", 
         name: "GST Registration", 
         desc: "Complete GST registration assistance with expert guidance and document preparation.",
-        modal: `
-          <h3>GST Registration Services</h3>
+        modal: `<h3>GST Registration Services</h3>
           <ul>
             <li>PAN Card</li><li>Aadhaar Card</li><li>Address Proof</li><li>Bank Account Details</li><li>Business Registration Certificate</li>
           </ul>
@@ -294,15 +294,13 @@
           </p>
           <p>
             <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
-          </p>
-        `
+          </p>`
       },
       { 
         icon: "fa-coins", 
         name: "Income Tax Filing", 
         desc: "Professional income tax return filing services for individuals and businesses.",
-        modal: `
-          <h3>Income Tax Filing Services</h3>
+        modal: `<h3>Income Tax Filing Services</h3>
           <ul>
             <li>Individual ITR Filing (ITR-1 to ITR-4)</li>
             <li>Business Tax Returns</li>
@@ -321,15 +319,13 @@
           </p>
           <p>
             <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
-          </p>
-        `
+          </p>`
       },
       { 
         icon: "fa-passport", 
         name: "Passport Services", 
         desc: "New passport applications, renewals, and related documentation services.",
-        modal: `
-          <h3>Passport Services</h3>
+        modal: `<h3>Passport Services</h3>
           <ul>
             <li>New Passport Application</li>
             <li>Passport Renewal</li>
@@ -349,15 +345,13 @@
           </p>
           <p>
             <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
-          </p>
-        `
+          </p>`
       },
       { 
         icon: "fa-id-card", 
         name: "PAN/TAN Services", 
         desc: "PAN card applications, corrections, and TAN registration services.",
-        modal: `
-          <h3>PAN/TAN Services</h3>
+        modal: `<h3>PAN/TAN Services</h3>
           <p><strong>PAN Card:</strong> New Application, Correction, Duplicate, Verification</p>
           <p><strong>TAN Services:</strong> Registration, Correction, TDS Return Filing</p>
           <p><strong>Quick Processing:</strong> 5-15 working days</p>
@@ -372,15 +366,13 @@
           </p>
           <p>
             <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
-          </p>
-        `
+          </p>`
       },
       { 
         icon: "fa-shield-alt", 
         name: "Digital Signature Certificates", 
         desc: "Secure digital signature certificates for official document signing.",
-        modal: `
-          <h3>Digital Signature Certificates</h3>
+        modal: `<h3>Digital Signature Certificates</h3>
           <ul>
             <li>Class 2 DSC (Individual)</li>
             <li>Class 3 DSC (Individual &amp; Organization)</li>
@@ -400,15 +392,13 @@
           </p>
           <p>
             <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
-          </p>
-        `
+          </p>`
       },
       {
         icon: "fa-book",
         name: "Competitive Exam Applications",
         desc: "Application assistance for various competitive examinations and entrance tests.",
-        modal: `
-          <h3>Competitive Exam Applications</h3>
+        modal: `<h3>Competitive Exam Applications</h3>
           <ul>
             <li>Banking Exams (SBI, IBPS, RBI)</li>
             <li>Civil Services (UPSC, State PSC)</li>
@@ -425,15 +415,13 @@
           </p>
           <p>
             <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
-          </p>
-        `
+          </p>`
       },
       {
         icon: "fa-graduation-cap",
         name: "Scholarship Applications",
         desc: "Complete guidance for scholarship applications and educational funding.",
-        modal: `
-          <h3>Scholarship Applications</h3>
+        modal: `<h3>Scholarship Applications</h3>
           <ul>
             <li>Government Scholarships</li>
             <li>Merit-based Scholarships</li>
@@ -449,15 +437,13 @@
           </p>
           <p>
             <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
-          </p>
-        `
+          </p>`
       },
       {
         icon: "fa-globe",
         name: "Other Online Services",
         desc: "Various government and private online services assistance.",
-        modal: `
-          <h3>Other Online Services</h3>
+        modal: `<h3>Other Online Services</h3>
           <ul>
             <li>Aadhaar Services (New/Update)</li>
             <li>Ration Card Applications</li>
@@ -475,12 +461,9 @@
           </p>
           <p>
             <b>Email:</b> <span style="color:#764ba2;">jsosjagtial@gmail.com</span>
-          </p>
-        `
+          </p>`
       }
     ];
-    // -- SERVICES ARRAY END --
-
     function renderServices(filter="") {
       const grid = document.getElementById('servicesGrid');
       let filtered = services.filter(s => s.name.toLowerCase().includes(filter.toLowerCase()) || s.desc.toLowerCase().includes(filter.toLowerCase()));
@@ -541,14 +524,19 @@
         </div>`;
         return;
       }
-      container.innerHTML = newsItems.map(item => `
-        <div class="news-item" style="position:relative;">
-          <div class="news-date">${item.date}</div>
-          <h4>${item.title}</h4>
-          <p>${item.content}</p>
-          ${item.imageUrl ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
-        </div>
-      `).join('');
+      container.innerHTML = newsItems.map((item, i) => {
+        const words = (item.content || "").split(/\s+/);
+        const shortPreview = words.slice(0, 3).join(" ") + (words.length > 3 ? "..." : "");
+        const url = `news-detail.html?title=${encodeURIComponent(item.title || "")}&date=${encodeURIComponent(item.date || "")}&content=${encodeURIComponent(item.content || "")}&imageUrl=${encodeURIComponent(item.imageUrl || "")}`;
+        return `
+          <div class="news-item" style="position:relative;">
+            <div class="news-date">${item.date || ""}</div>
+            <h4>${item.title || ""}</h4>
+            <p>${shortPreview} <a href="${url}" target="_blank" class="btn" style="padding:2px 10px;font-size:0.98em;display:inline-block;margin-left:8px;">Read More</a></p>
+            ${item.imageUrl ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
+          </div>
+        `;
+      }).join('');
     }
 
     function loadNews() {
