@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "title": "New Service Launched!",
+    "content": "We have launched a new digital service for our users. Experience faster processing and better support for all your application needs.",
+    "imageUrl": "",
+    "date": "15 Jun 2025",
+    "timestamp": 1749969748211
+  },
+  {
+    "title": "Holiday Notice",
+    "content": "Our office will be closed on 17th June due to a public holiday. We wish you a happy and safe holiday!",
+    "imageUrl": "",
+    "date": "16 Jun 2025",
+    "timestamp": 1749969748212
+  },
+  {
+    "title": "Important: Update Your Contact Details",
+    "content": "Please log in to your account and update your contact information to ensure uninterrupted service notifications.",
+    "imageUrl": "",
+    "date": "14 Jun 2025",
+    "timestamp": 1749969748213
+  }
+]
