@@ -558,7 +558,7 @@
     function openFullNews(timestamp) {
       window.open('news-detail.html?ts=' + encodeURIComponent(timestamp), '_blank');
     }
-    // --- FIX: cache busting for always-updated news.json ---
+    // --- cache busting for always-updated news.json ---
     function loadNews() {
       fetch('news.json?v=' + Date.now())
         .then(res => res.json())
