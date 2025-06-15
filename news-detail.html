@@ -20,6 +20,7 @@
       border-radius: 14px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.13);
       padding: 2.8rem 2.2rem 2.2rem 2.2rem;
+      position: relative;
     }
     .news-title {
       font-size: 2rem;
@@ -47,30 +48,42 @@
       margin-bottom: 2rem;
       white-space: pre-line;
     }
-    .back-link {
-      display: inline-block;
-      margin-bottom: 1.5rem;
-      color: #764ba2;
-      font-weight: bold;
+    .home-btn {
+      position: absolute;
+      top: 18px;
+      left: 22px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 17px;
+      font-size: 1.1rem;
+      cursor: pointer;
       text-decoration: none;
-      font-size: 1rem;
-      border-radius: 6px;
-      padding: 5px 14px 5px 0;
-      transition: color 0.2s;
+      font-weight: 600;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 7px;
     }
-    .back-link:hover {
-      color: #28a745;
-      text-decoration: underline;
+    .home-btn:hover {
+      background: #3730a3;
+      color: #fff;
+      text-decoration: none;
+    }
+    .back-link {
+      display: none;
     }
     @media (max-width: 700px) {
       .container { padding: 1.1rem 3vw;}
       .news-title { font-size: 1.35rem;}
+      .home-btn { top: 12px; left: 12px; padding: 7px 12px; font-size: 1em;}
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <a href="index.html#news" class="back-link"><i class="fas fa-arrow-left"></i> Back to News</a>
+    <a class="home-btn" href="index.html"><i class="fas fa-home"></i>Home</a>
     <div id="newsDetail">
       <div style="color:#aaa;text-align:center;padding:2em 0;">
         <i class="fas fa-spinner fa-spin"></i> Loading...
@@ -78,13 +91,14 @@
     </div>
   </div>
   <script>
-    // Get timestamp from URL: ?ts=...
-    function getTimestamp() {
+    // Support both: news via ?title=...&date=...&content=...&imageUrl=... and the old json fetch method
+    function getParam(key) {
       const params = new URLSearchParams(window.location.search);
-      return params.get('ts');
+      return params.get(key);
     }
 
-    // Render news detail
+    function decode(s) { try { return decodeURIComponent(s || ""); } catch { return s || ""; } }
+
     function renderNewsDetail(news) {
       if (!news) {
         document.getElementById('newsDetail').innerHTML = `
@@ -104,13 +118,30 @@
       `;
     }
 
-    // Load news.json and show the correct news item
+    // If URL params exist, use them, else fallback to old logic (timestamp/news.json)
     function loadNewsDetail() {
-      const ts = getTimestamp();
+      const title = getParam('title');
+      const date = getParam('date');
+      const content = getParam('content');
+      const imageUrl = getParam('imageUrl');
+      if (title || content) {
+        renderNewsDetail({
+          title: decode(title),
+          date: decode(date),
+          content: decode(content),
+          imageUrl: decode(imageUrl)
+        });
+        return;
+      }
+      // Fallback: legacy ts/news.json loading for backward compatibility
+      const ts = getParam('ts');
+      if (!ts) {
+        renderNewsDetail(null);
+        return;
+      }
       fetch('news.json?v=' + Date.now())
         .then(res => res.json())
         .then(newsArr => {
-          // Try string and number match for timestamp
           const news = newsArr.find(n => String(n.timestamp) === String(ts));
           renderNewsDetail(news);
         })
