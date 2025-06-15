@@ -529,6 +529,9 @@
       setTimeout(()=>toast.classList.remove('show'), time);
     }
 
+    // NEWS SECTION: fetches news from backend API
+    const NEWS_API_URL = "http://localhost:3001/api/news"; // CHANGE to your deployed API endpoint if different
+
     function renderNews(newsItems) {
       const container = document.getElementById('newsContainer');
       if (!newsItems.length) {
@@ -538,29 +541,18 @@
         </div>`;
         return;
       }
-      container.innerHTML = newsItems.map(item => {
-        let snippet = item.content.length > 150 ? item.content.substring(0, 150) + '...' : item.content;
-        return `
-          <div class="news-item" style="position:relative;">
-            <div class="news-date">${item.date}</div>
-            <h4>${item.title}</h4>
-            <p style="margin-bottom:0;">
-              ${snippet}
-              <b>
-                <button class="btn" style="display:inline-block;font-weight:700;padding:4px 14px;margin-left:8px;font-size:1em;" onclick="openFullNews('${item.timestamp}')">Read More</button>
-              </b>
-            </p>
-            ${item.imageUrl ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
-          </div>
-        `;
-      }).join('');
+      container.innerHTML = newsItems.map(item => `
+        <div class="news-item" style="position:relative;">
+          <div class="news-date">${item.date}</div>
+          <h4>${item.title}</h4>
+          <p>${item.content}</p>
+          ${item.imageUrl ? `<img src="${item.imageUrl}" class="news-image" alt="News Image">` : ""}
+        </div>
+      `).join('');
     }
-    function openFullNews(timestamp) {
-      window.open('news-detail.html?ts=' + encodeURIComponent(timestamp), '_blank');
-    }
-    // --- cache busting for always-updated news.json ---
+
     function loadNews() {
-      fetch('news.json?v=' + Date.now())
+      fetch(NEWS_API_URL)
         .then(res => res.json())
         .then(newsItems => renderNews(newsItems))
         .catch(() => {
@@ -576,6 +568,7 @@
       loadNews();
     });
 
+    // TESTIMONIALS
     const testimonials = [
       { quote: "I got my GST registration done in just 3 days! The team is super friendly and responsive.", author: "Priya S." },
       { quote: "Their tax filing service saved me a lot of time and confusion. Highly recommended.", author: "Rahul K." },
