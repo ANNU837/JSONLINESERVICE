@@ -3,6 +3,8 @@ const cors = require('cors');
 const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
+const bodyParser = require('body-parser');
+const adminAuth = require('./admin-auth');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -15,12 +17,16 @@ if (!fs.existsSync(uploadDir)) {
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 app.use('/uploads', express.static(uploadDir));
 
 // Friendly root route
 app.get('/', (req, res) => {
   res.send('Welcome to the News API. Use /api/news for news data.');
 });
+
+// --- ADMIN AUTH ---
+app.post('/api/admin/login', adminAuth.login);
 
 // Multer config
 const storage = multer.diskStorage({
@@ -35,11 +41,11 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-app.post('/api/news/upload', upload.single('image'), (req, res) => {
+// Image upload (protected)
+app.post('/api/news/upload', adminAuth.authMiddleware, upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No image uploaded' });
   }
-  // Use dynamic URL for both local and cloud
   const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
   res.json({ url: imageUrl });
 });
@@ -58,11 +64,13 @@ function writeNews(news) {
   fs.writeFileSync(NEWS_FILE, JSON.stringify(news, null, 2), 'utf8');
 }
 
+// --- Public: Get news ---
 app.get('/api/news', (req, res) => {
   res.json(readNews());
 });
 
-app.post('/api/news', (req, res) => {
+// --- Protected: Add news ---
+app.post('/api/news', adminAuth.authMiddleware, (req, res) => {
   const { title, content, imageUrl } = req.body;
   if (!title || !content) {
     return res.status(400).json({ error: 'Title and content required' });
@@ -82,7 +90,8 @@ app.post('/api/news', (req, res) => {
   res.json({ success: true });
 });
 
-app.delete('/api/news/:timestamp', (req, res) => {
+// --- Protected: Delete news item ---
+app.delete('/api/news/:timestamp', adminAuth.authMiddleware, (req, res) => {
   const ts = Number(req.params.timestamp);
   let news = readNews();
   news = news.filter(item => item.timestamp !== ts);
@@ -90,7 +99,8 @@ app.delete('/api/news/:timestamp', (req, res) => {
   res.json({ success: true });
 });
 
-app.delete('/api/news', (req, res) => {
+// --- Protected: Clear all news ---
+app.delete('/api/news', adminAuth.authMiddleware, (req, res) => {
   writeNews([]);
   res.json({ success: true });
 });
