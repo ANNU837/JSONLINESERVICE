@@ -118,7 +118,7 @@
       `;
     }
 
-    // If URL params exist, use them, else fallback to old logic (timestamp/news.json)
+    // If URL params exist, use them, else fallback to fetch from backend API by timestamp
     function loadNewsDetail() {
       const title = getParam('title');
       const date = getParam('date');
@@ -133,13 +133,14 @@
         });
         return;
       }
-      // Fallback: legacy ts/news.json loading for backward compatibility
+      // Fallback: fetch from backend by timestamp if ts param exists
       const ts = getParam('ts');
       if (!ts) {
         renderNewsDetail(null);
         return;
       }
-      fetch('news.json?v=' + Date.now())
+      // Updated: fetch from backend API using timestamp
+      fetch(`https://jsonlineservice.onrender.com/api/news`)
         .then(res => res.json())
         .then(newsArr => {
           const news = newsArr.find(n => String(n.timestamp) === String(ts));
