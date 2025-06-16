@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const ADMIN_USER = 'admin';
-const ADMIN_PASS_HASH = '$2a$10$D4RFy3M89GJ5p1FjodHKyutG0cA0A5B8bKz2VGA0Y7Iu3wQ2h7pK6'; // hash of ZahJaf@321
+const ADMIN_PASS_HASH = '$2b$10$jXOb8K4F25dvnOQr5Go1d.rLW.5f0dzdP.qg6mSf90MX6Q6okXnbS'; // hash of ZahJaf@321
 const JWT_SECRET = 'supersecret_jwt_secret_key';
 
 exports.login = async (req, res) => {
