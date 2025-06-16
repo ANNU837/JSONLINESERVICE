@@ -513,7 +513,8 @@
     }
 
     // NEWS SECTION: fetches news from backend API
-    const NEWS_API_URL = "http://localhost:3001/api/news"; // CHANGE to your deployed API endpoint if different
+    // UPDATED: Use Render live API endpoint
+    const NEWS_API_URL = "https://jsonlineservice.onrender.com/api/news";
 
     function renderNews(newsItems) {
       const container = document.getElementById('newsContainer');
